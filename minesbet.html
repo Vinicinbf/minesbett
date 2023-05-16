@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo de Cartas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            background: url('file:///C:/Users/vinic/Downloads/fundo%20pagina.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+        }
+
+        #logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #game-container {
+            position: relative;
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .card {
+            background-color: black;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #timer-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 24px;
+            color: white;
+        }
+
+        #timer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 36px;
+            color: red;
+        }
+
+        #hack-message {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 24px;
+            display: none;
+            color: white;
+        }
+
+        #play-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #play-button {
+            padding: 30px 80px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+        }
+
+        #footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: white;
+        }
+
+        .iframe-container {
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%;
+        }
+
+        #game-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jogo de Cartas</h1>
+        <div id="logo">
+            <img src="file:///C:/Users/vinic/Downloads/digital%20(18).png" alt="Logo">
+        </div>
+        <div id="game-container">
+            <div id="timer-label">Tempo restante:</div>
+            <div id="timer">30</div>
+            <div id="hack-message">🤖I.A. hackeando, aguarde
+            </div>
+            <div id="game-board"></div>
+            <div id="play
+            <div id="play-button-container">
+                <button id="play-button" onclick="playMines()">Aguarde...</button>
+            </div>
+        </div>
+        <div id="footer">
+            <div class="iframe-container">
+                <iframe id="game-iframe" src="https://go.aff.afiliadoszep.bet/8fvirqy4" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Definição dos ajustes
+        const minStars = 4; // Mínimo de estrelas
+        const maxStars = 6; // Máximo de estrelas
+        const minBombs = 3; // Mínimo de bombas
+        const maxBombs = 5; // Máximo de bombas
+
+        // Função para criar as cartas
+        function createCards() {
+            const gameBoard = document.getElementById("game-board");
+
+            // Limpa o tabuleiro
+            gameBoard.innerHTML = "";
+
+            // Cálculo da quantidade de estrelas e bombas
+            const totalCards = 25;
+            const starsCount = Math.floor(Math.random() * (maxStars - minStars + 1)) + minStars;
+            const bombsCount = totalCards - starsCount;
+
+            // Array com as imagens das cartas
+            const cardImages = Array(starsCount).fill("file:///C:/Users/vinic/Downloads/digital%20(20).png")
+                .concat(Array(bombsCount).fill("file:///C:/Users/vinic/Downloads/digital%20(19).png"));
+
+            // Embaralha as imagens das cartas
+            cardImages.sort(() => Math.random() - 0.5);
+
+            // Cria as cartas
+            for (let i = 0; i < totalCards; i++) {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                const img = document.createElement("img");
+                img.src = cardImages[i];
+                card.appendChild(img);
+                gameBoard.appendChild(card);
+            }
+
+            // Atualiza a mensagem sugerindo a quantidade de bombas
+            const bombSuggestion = document.getElementById("hack-message");
+            bombSuggestion.style.display = "block";
+        }
+
+        // Função para atualizar o contador regressivo
+        function updateTimer() {
+            let time = 30;
+            const timer = document.getElementById("timer");
+            const bombSuggestion = document.getElementById("hack-message");
+            const playButtonContainer = document.getElementById("play-button-container");
+
+            const countdown = setInterval(() => {
+                time--;
+                timer.textContent = time;
+
+                if (time === 25) {
+                    playButtonContainer.style.display = "block";
+                    const playButton = document.getElementById("play-button");
+                    playButton.style.display = "block";
+                    playButton.textContent = "Jogar Mines";
+                }
+
+                if (time === 0) {
+                    clearInterval(countdown);
+                    bombSuggestion.style.display = "none";
+                    shuffleCards();
+                    time = 30;
+                    updateTimer();
+                }
+            }, 1000);
+        }
+
+        // Função para embaralhar as cartas
+        function shuffleCards() {
+            const cards = document.querySelectorAll(".card");
+
+            // Remove todas as cartas do tabuleiro
+            cards.forEach(card => card.remove());
+
+            createCards();
+        }
+
+        // Função para iniciar o jogo
+        function startGame() {
+            createCards();
+            updateTimer();
+        }
+
+        // Função para jogar Mines
+        function playMines() {
+            window.location.href =
+            window.location.href = "https://zep.bet/casino/spribe-mines?src=hqryscngavofngaohws&utm_source=69878";
+        }
+
+        // Inicia o jogo quando a página é carregada
+        window.onload = startGame;
+    </script>
+</body>
+</html>
